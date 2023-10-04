@@ -1,4 +1,4 @@
-# SwarMer
+# Group-Formation
 
 ## Clone
 ``git clone https://github.com/flyinglightspeck/Group-Formation.git``
