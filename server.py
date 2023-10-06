@@ -237,12 +237,7 @@ if __name__ == '__main__':
             np.random.shuffle(point_cloud)
             point_cloud = point_cloud[:Config.SAMPLE_SIZE]
 
-    # dists = np.linalg.norm(point_cloud, axis=1)
-    # sorted_indexes = np.flip(np.argsort(dists))
-    # point_cloud = point_cloud[sorted_indexes]
-
     total_count = point_cloud.shape[0]
-    # h = np.log2(total_count)
 
     gtl_point_cloud = np.random.uniform(0, 5, size=(total_count, 3))
     sample = np.zeros(K+1, dtype=np.int32)
@@ -262,21 +257,7 @@ if __name__ == '__main__':
     shared_memories = dict()
 
     local_gtl_point_cloud = []
-    # pidx = np.array(node_point_idx)
-    # np.random.shuffle(pidx)
-    # print(pidx)
 
-    # if Config.H == 2:
-    #     knn_idx, knn_dists = utils.knn(gtl_point_cloud)
-
-    # print(gtl_point_cloud)
-    # print(knn_idx[0])
-    # print(knn_dists[0])
-    # exit()
-    # 1: DISCOVER
-    # 1 * (101.454, 1, 13, 25, 39, 41, 62, 64, 81, 84, 107, 120, 135, 139, 146, 158)\
-    #     (158, 107, 146, 84, 64, 139, 39, 81,
-    #                                                                                25, 62, 41, 13, 135, 120)
     try:
         for i in node_point_idx:
             shm = shared_memory.SharedMemory(create=True, size=sample.nbytes)
@@ -317,33 +298,7 @@ if __name__ == '__main__':
 
     start_time = time.time()
     is_failed = False
-    print('waiting for processes ...')
-
-    # last_num = 0
-    # num_freeze = 0
-    # connections = dict()
-    # while True:
-    #     time.sleep(1)
-    #     visited = {0}
-    #     is_paired = dict()
-    #     for i in range(len(shared_arrays)):
-    #         connections[i+1] = shared_arrays[i]
-    #     for n, c in connections.items():
-    #         if n in visited:
-    #             continue
-    #         visited.add(n)
-    #         n_pairs = []
-    #         for ci in c:
-    #             if ci in visited:
-    #                 continue
-    #             visited.add(ci)
-    #             n_pairs.append(all(c == connections[ci]))
-    #         is_paired[n] = len(n_pairs) and all(n_pairs)
-    #
-    #     if len(is_paired) and all(is_paired.values()):
-    #         break
-    #     if count - sum(is_paired.values()) * K == count % K:
-    #         break
+    # print('waiting for processes ...')
 
     freeze_timer = start_time
     last_hash = None
@@ -389,7 +344,6 @@ if __name__ == '__main__':
 
             if cur_time - freeze_timer >= Config.SERVER_TIMEOUT:
                 is_failed = True
-                print("__TIMEOUT__")
                 print(cliques)
                 break
             last_hash = d_hash
@@ -507,4 +461,3 @@ if __name__ == '__main__':
         time.sleep(10)
         client_socket.send(struct.pack('b', True))
         client_socket.close()
-    # utils.plot_point_cloud(np.stack(gtl_point_cloud), None)

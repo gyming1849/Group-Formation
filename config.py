@@ -16,8 +16,8 @@ class Config:
     SHAPE = 'chess'
     RESULTS_PATH = 'results'
     DEBUG = True
-    FILE_NAME_KEYS = ['K']
-    DIR_KEYS = ['H']
+    FILE_NAME_KEYS = ['K']  # list of properties that should be used in the name of results file names
+    DIR_KEYS = ['H']  # list of properties that should be used in the name of results directory
     SERVER_TIMEOUT = 120
     PROCESS_JOIN_TIMEOUT = 120
     NUM_DISPATCHERS = 1
@@ -27,7 +27,7 @@ class Config:
     TEST_ENABLED = True
     NUMBER_OF_FLSS = 12
     R = 10  # ratio of r2 to r1
-    H = 2.2  # heuristic 1, 2.1, 2.2, vns, rs
+    H = "canf"  # valid values for heuristic: simpler, canf, vns, rs
     VNS_TIMEOUT = 0.1
     EXPANSION_TIMEOUT = 0.05
     ETA = K - 1  # initial eta only effective for h:1 and h:rs

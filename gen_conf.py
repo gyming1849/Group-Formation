@@ -15,8 +15,8 @@ def_general_conf = {
     "SAMPLE_SIZE": "0",
     "DURATION": "600",
     "READ_FROM_NPY": "0",
-    "K": "10",
-    "SHAPE": "test90",
+    "K": "3",
+    "SHAPE": "test",
     "RESULTS_PATH": "results",
     "DEBUG": "False",
     "FILE_NAME_KEYS": "['K']",
@@ -30,41 +30,55 @@ def_general_conf = {
     "TEST_ENABLED": "False",
     "NUMBER_OF_FLSS": "12",
     "R": "1",  # ratio of r2 to r1
-    "H": "2.2",  # heuristic 1, 2.1, 2.2, vns, rs
+    "H": "canf",  # valid values for heuristic: simpler, canf, vns, rs
     "VNS_TIMEOUT": "0.1",
     "EXPANSION_TIMEOUT": "0.05",
-    "ETA": "K - 1",  # initial eta only effective for h:1 and h:rs
+    "ETA": "K - 1",  # initial eta only effective for H = simpler and H = rs
     "ETA_STR": "k-1",
 }
 
 general_props = [
+    {
+        "keys": ["SHAPE"],
+        "values": ["'chess'", "'dragon'"]
+    },
+    {
+        "keys": ["K"],
+        "values": ["3", "15"]
+    },
+    {
+        "keys": ["H"],
+        "values": ["'simpler'", "'canf'", "'vns'", "'rs'"]
+    },
+
+    # you can combine multiple properties if you don't need all the combinations
     # {
     #     "keys": ["SHAPE", "K"],
     #     "values": [
-    #         # {"SHAPE": "'chess'", "K": "3"},
-    #         # {"SHAPE": "'chess'", "K": "20"},
-    #         {"SHAPE": "'skateboard'", "K": "20"},
+    #         {"SHAPE": "'chess'", "K": "3"},
+    #         {"SHAPE": "'dragon'", "K": "20"},
     #     ]
-    # },
-    # {
-    #     "keys": ["H"],
-    #     "values": ["2.2", "'rs'"]
     # },
 ]
 
 if __name__ == '__main__':
     file_name = "config"
     class_name = "Config"
+    directory_path = "experiments"
     props = general_props
     def_conf = def_general_conf
 
     props_values = [p["values"] for p in props]
     print(props_values)
     combinations = list(itertools.product(*props_values))
-    print(len(combinations))
+    print(f"Generated {len(combinations)} config files in {directory_path}")
 
-    if not os.path.exists('experiments'):
-        os.makedirs('experiments', exist_ok=True)
+    try:
+        if os.path.exists('experiments'):
+            os.rmdir(directory_path)
+        os.makedirs(directory_path, exist_ok=True)
+    except OSError as e:
+        print(f"Error: {e}")
 
     for j in range(len(combinations)):
         c = combinations[j]

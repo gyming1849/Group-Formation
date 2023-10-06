@@ -97,7 +97,7 @@ class StateMachine:
                 count = 1
                 els = [self.context.el]
 
-            if Config.H == 2.1 or Config.H == 2.2:
+            if Config.H == 2.1 or Config.H == 'canf':
                 m_range = self.context.radio_range
                 s_range = self.solution_range
             else:
@@ -297,11 +297,9 @@ class StateMachine:
                     if all(nc in self.context.neighbors for nc in new_c):
                         if self.attr_v(new_c) > self.attr_v(c):
                             c = new_c
-            if Config.H == 1:
+            if Config.H == 'simpler':
                 c_prime, last_idx = self.heuristic_1(c)
-            # elif Config.H == 2:
-            #     c_prime, last_idx = self.heuristic_2(c)
-            elif Config.H == 2.1 or Config.H == 2.2:
+            elif Config.H == 2.1 or Config.H == 'canf':
                 c_prime, last_idx = self.heuristic_2_1(c)
             elif Config.H == 'vns':
                 c_prime, last_idx = self.heuristic_vns(c)

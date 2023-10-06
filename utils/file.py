@@ -84,41 +84,6 @@ def create_csv_from_json(directory, duration=0):
         writer = csv.writer(csvfile)
         writer.writerows(node_rows)
 
-    # pair_weights = list(filter(lambda x: x != -1, weights))
-    # pair_min_dists = list(filter(lambda x: x != 0, min_dists))
-    # pair_avg_dists = list(filter(lambda x: x != 0, avg_dists))
-    # pair_max_dists = list(filter(lambda x: x != 0, max_dists))
-    #
-    # if len(pair_weights) == 0:
-    #     pair_weights = [-1]
-    # if len(pair_min_dists) == 0:
-    #     pair_min_dists = [-1]
-    # if len(pair_avg_dists) == 0:
-    #     pair_avg_dists = [-1]
-    # if len(pair_max_dists) == 0:
-    #     pair_max_dists = [-1]
-    #
-    # metrics_rows = [["metric", "value"],
-    #                 ["duration", duration],
-    #                 ["min min_dists", min(pair_min_dists)],
-    #                 ["avg min_dists", sum(pair_min_dists) / len(pair_min_dists)],
-    #                 ["max min_dists", max(pair_min_dists)],
-    #                 ["min avg_dists", min(pair_avg_dists)],
-    #                 ["avg avg_dists", sum(pair_avg_dists) / len(pair_avg_dists)],
-    #                 ["max avg_dists", max(pair_avg_dists)],
-    #                 ["min max_dists", min(pair_max_dists)],
-    #                 ["avg max_dists", sum(pair_max_dists) / len(pair_max_dists)],
-    #                 ["max max_dists", max(pair_max_dists)],
-    #                 ["min weights", min(pair_weights)],
-    #                 ["avg weights", sum(pair_weights) / len(pair_weights)],
-    #                 ["max weights", max(pair_weights)],
-    #                 ["number of cliques", len(pair_weights)],
-    #                 ["number of single nodes", len(list(filter(lambda x: x == -1, weights)))]
-    #                 ]
-    # with open(os.path.join(directory, 'metrics.csv'), 'w', newline='') as csvfile:
-    #     writer = csv.writer(csvfile)
-    #     writer.writerows(metrics_rows)
-
 
 def write_csv(directory, rows, name):
     with open(os.path.join(directory, 'metrics.csv'), 'w', newline='') as csvfile:
@@ -490,7 +455,7 @@ def elastic_post_process(path):
     xlsx_files = glob.glob(f"{path}/*.xlsx")
 
     for f in xlsx_files:
-        m = re.search(r'(\d+_(Aug|Sep)_\d+_\d+_\d+)', f)
+        m = re.search(r'(\d+_(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)_\d+_\d+_\d+)', f)
         # m = re.search(r'_(\d+).xlsx$', f)
         datetime = m.group(1)
         exp_path = f"{path}/{datetime}"
@@ -499,7 +464,7 @@ def elastic_post_process(path):
     time.sleep(1)
 
     for f in xlsx_files:
-        m = re.search(r'(\d+_(Aug|Sep)_\d+_\d+_\d+)', f)
+        m = re.search(r'(\d+_(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)_\d+_\d+_\d+)', f)
         # m = re.search(r'_(\d+).xlsx$', f)
         datetime = m.group(1)
         print(datetime)
@@ -626,33 +591,13 @@ def gen_sw_charts(path_1, path_2, fid):
 if __name__ == "__main__":
     # rcParams['font.family'] = 'Times New Roman'
     # mpl.use('macosx')
-    # # for i in range(1):
-    #
-    # gen_sw_charts('/Users/hamed/Desktop/chess_bw/08_Aug_11_18_08', '/Users/hamed/Desktop/chess_rs_bw/08_Aug_12_39_53', 1)
-    #
-    # exit()
-
 
     shape = 'chess'
     g = 10
     alg = 'rs'
-    # path = f"/Users/hamed/Documents/Holodeck/SwarMerPy/scripts/aws/results/c2_elastic_sender/results/test90/H:2.2_DROP_PROB_SENDER:{sl}_DROP_PROB_RECEIVER:{rl}"
-    path = f"/Users/hamed/Desktop/{shape}_{alg}_g{g}"
+    path = f"PATH_TO_RESULTS/{shape}_{alg}_g{g}"
     os.makedirs(os.path.join(path, 'processed'), exist_ok=True)
     elastic_post_process(path)
-    # exit()
-
-
-    # if len(sys.argv) == 4:
-    #     dir_in = sys.argv[1]
-    #     dir_out = sys.argv[2]
-    #     name = sys.argv[3]
-    # else:
-    # dir_in = "/Users/hamed/Documents/Holodeck/SwarMerPy/scripts/aws/results/17-Jul-14_31_22/results/test90/EXPANSION_TIMEOUT:0.05/17_Jul_21_31_51"
-    # create_csv_from_json(dir_in, 0)
-    # combine_csvs(dir_in, dir_out, name)
-
-    # exit()
 
     groups = [g]
     rs = [shape]
@@ -661,24 +606,11 @@ if __name__ == "__main__":
 
     dfs = []
 
-    # path = f"/Users/hamed/Desktop/receiver20/DROP_PROB_SENDER:{sl}_DROP_PROB_RECEIVER:{rl}"
     path = f"{path}/processed"
     for g in groups:
         dir_name = f"K{g}"
         subprocess.call(["mkdir", "-p", f"{path}/{dir_name}"])
         subprocess.call(f"mv {path}/*_K:{g}_*.xlsx {path}/{dir_name}", shell=True)
         dfs.append(combine_xlsx_with_formula(f"{path}/{dir_name}", rs, shape=True))
-        # dfs.append(combine_xlsx_with_formula_static(f"{path}/{dir_name}", rs))
-        # break
 
-    # combine_groups(path, f'summary_skateboard_elastic_g20', dfs, groups, rs, 10)
     combine_groups(path, f'summary_{shape}_{alg}_g{g}', dfs, groups, rs, 10)
-    # combine_groups(path, f'summary_dragon_simpler_g10_etaG', dfs, groups, rs, 10)
-    # combine_groups(path, f'summary_dragon_rs_g5_etaG-1', dfs, groups, rs, 10)
-    # combine_xlsx(f"/Users/hamed/Desktop/all_k11", f"summary")
-    # combine_xlsx(f"/Users/hamed/Desktop/all_k15", f"summary")
-    # combine_xlsx("/Users/hamed/Desktop/dragon/k20", "dragon_K:20")
-    # combine_xlsx("/Users/hamed/Desktop/skateboard/k20", "skateboard_K:20")
-    # combine_xlsx("/Users/hamed/Desktop/racecar/k10", "racecar_K:10")
-    # combine_xlsx("/Users/hamed/Desktop/165-point_64-core/H:rs_ETA_STR:K")
-    # combine_xlsx("/Users/hamed/Desktop/165-point_64-core/H:rs_ETA_STR:1.5K")
