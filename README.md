@@ -8,9 +8,9 @@
 
 Run ``bash setup.sh`` to set up the project.
 
-Modify the `cong.py` to your desired configuration, then run `server.py`.
+The variables specified in `config.py` control settings.  Once these are adjusted (see below), run `server.py`.
 
-For using the shape point clouds, set the `SHAPE` value to the shape name and set the `TEST_ENABLED` to `False`. Otherwise, set the `TEST_ENABLED` to True and `SHAPE` to `test` for running the algorithm on the outring point cloud.
+Group-Formation may be used with either a synthetic point cloud (Outring) or an actual point cloud.  We provide several point clouds, e.g., a Chess piece.  The value of variables SHAPE and TEST_ENABLED in config.py control the setting.  For using the shape point clouds, set the `SHAPE` value to the shape name and set the `TEST_ENABLED` to `False`. Otherwise, set the `TEST_ENABLED` to True and `SHAPE` to `test` for running the algorithm on the synthetically generated Outring point cloud.
 
 For shapes, use `SAMPLE_SIZE` to sample a smaller number of points from the point cloud. If set to zero, all points will be used.
 

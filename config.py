@@ -1,8 +1,8 @@
 class Config:
-    INITIAL_RANGE = 1
-    MAX_RANGE = 2000
-    DROP_PROB_SENDER = 0
-    DROP_PROB_RECEIVER = 0
+    INITIAL_RANGE = 1 # Initial radio range of an FLS in display cells
+    MAX_RANGE = 2000  # Maximum radio range of an FLS
+    DROP_PROB_SENDER = 0 # Probability of a sender dropping packets
+    DROP_PROB_RECEIVER = 0 # Probability of a receiver dropping packets
     DEAD_RECKONING_ANGLE = 0
     ACCELERATION = 6
     DECELERATION = 6
@@ -12,8 +12,8 @@ class Config:
     SAMPLE_SIZE = 0
     DURATION = 600
     READ_FROM_NPY = 0
-    K = 3
-    SHAPE = 'chess'
+    K = 3   # Group size
+    SHAPE = 'chess' # Shape used for forming groups
     RESULTS_PATH = 'results'
     DEBUG = True
     FILE_NAME_KEYS = ['K']  # list of properties that should be used in the name of results file names
