@@ -1,4 +1,4 @@
-This repository provides an implementation of four decentralized group formation algorithms. 
+This repository provides an implementation of four decentralized group formation algorithms: Closest Available Neighbor First (CANF), Simple Random, Random Subset (RS), and Variable Neighborhood Search (VNS).
 
 Authors:  Hamed Alimohammadzadeh(halimoha@usc.edu) and Shahram Ghandeharizadeh (shahram@usc.edu)
 
