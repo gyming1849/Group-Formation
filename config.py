@@ -1,8 +1,8 @@
 class Config:
-    INITIAL_RANGE = 1 # Initial radio range of an FLS in display cells
-    MAX_RANGE = 2000  # Maximum radio range of an FLS
-    DROP_PROB_SENDER = 0 # Probability of a sender dropping packets
-    DROP_PROB_RECEIVER = 0 # Probability of a receiver dropping packets
+    INITIAL_RANGE = 1  # Initial radio range of an FLS in display cells
+    MAX_RANGE = 2000   # Maximum radio range of an FLS
+    DROP_PROB_SENDER = 0  # Probability of a sender dropping packets
+    DROP_PROB_RECEIVER = 0  # Probability of a receiver dropping packets
     DEAD_RECKONING_ANGLE = 0
     ACCELERATION = 6
     DECELERATION = 6

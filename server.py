@@ -230,8 +230,7 @@ if __name__ == '__main__':
             with open(f'results/{Config.READ_FROM_NPY}.npy', 'rb') as f:
                 point_cloud = np.load(f)
         else:
-            mat = scipy.io.loadmat(f'assets/{Config.SHAPE}.mat')
-            point_cloud = mat['p']
+            point_cloud = np.loadtxt(f'assets/{Config.SHAPE}.txt', delimiter=',')
 
         if Config.SAMPLE_SIZE != 0:
             np.random.shuffle(point_cloud)
