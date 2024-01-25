@@ -1,4 +1,13 @@
-# Group-Formation
+This repository provides an implementation of four decentralized group formation algorithms. 
+
+Authors:  Hamed Alimohammadzadeh(halimoha@usc.edu) and Shahram Ghandeharizadeh (shahram@usc.edu)
+
+# Features
+
+  * Four decentralized algorithms that construct arbitrary sized groups given either a synthetic or a real point cloud.  The size of a group is denoted as G.
+  * Constructs symmetric groups.  This means the participation of a member (an FLS) in a group is reciprocated by all the members in that group.
+  * An implementation of OutRing with known optimal solutions for its sparse settings.
+
 
 ## Clone
 ``git clone https://github.com/flyinglightspeck/Group-Formation.git``
