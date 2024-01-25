@@ -6,13 +6,12 @@ Authors:  Hamed Alimohammadzadeh(halimoha@usc.edu) and Shahram Ghandeharizadeh (
 
   * Four decentralized algorithms that construct fix-sized groups given either a synthetic or a real point cloud.  The size of a group is denoted as G.
   * Constructs symmetric groups.  This means the participation of a member (an FLS) in a group is reciprocated by all the members in that group.
-  * An implementation of OutRing with known optimal solutions for its sparse settings.
+  * An implementation of OutRing with known optimal solutions.
 
 
 # Limitations
   * With large point clouds and the Linux operating system, the execution of the software may exhaust the max open files supported by the operating system.  See below, Error with Large Point Clouds, for how to resolve. 
   * No support for asymmetric groups.  In other words, each algorithm strives to ensure the participation of a member in a group is reciprocated by all the members in that group. 
-
 
 
 # Clone
