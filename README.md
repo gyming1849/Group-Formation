@@ -15,11 +15,11 @@ Authors:  Hamed Alimohammadzadeh(halimoha@usc.edu) and Shahram Ghandeharizadeh (
 
 
 
-## Clone
+# Clone
 ``git clone https://github.com/flyinglightspeck/Group-Formation.git``
 
 
-## Running locally
+# Running locally
 
 Run ``bash setup.sh`` to set up the project.
 
@@ -34,7 +34,7 @@ For the outring point cloud, modify `NUMBER_OF_FLSS`, and 'R'.
 If running on limited resources, set the 'NUMBER_OF_FLSS' and 'SAMPLE_SIZE' to a small value, not more than four times the number of physical cores.
 
 
-## Running on AWS
+# Running on Amazon AWS
 First, set up a cluster of servers. Ideally, the total number of cores of the servers should equal or be greater than the number of points in the point cloud (number of FLSs).
 
 Set up a multicast domain (For more information on how to create a multicast domain see aws docs: https://docs.aws.amazon.com/vpc/latest/tgw/manage-domain.html)
@@ -64,7 +64,7 @@ After the experiments are finished, you can download the results using `scripts/
 Use `file.py` to post-process the results and generate the metrics
 
 
-## Large Point Clouds
+# Error with Large Point Clouds
 If you encountered an error regarding not enough fds, increase max open files system-wide to be able to run a large point cloud:
 
 ``sudo vim /etc/sysctl.conf``
