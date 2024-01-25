@@ -9,6 +9,12 @@ Authors:  Hamed Alimohammadzadeh(halimoha@usc.edu) and Shahram Ghandeharizadeh (
   * An implementation of OutRing with known optimal solutions for its sparse settings.
 
 
+# Limitations
+  * With large point clouds, the execution of the software may exhaust the max open files supported by the operating system.  See below for how to resolve. 
+  * No support for asymmetric groups.  In other words, each algorithm strives to ensure the participation of a member in a group is reciprocated by all the members in that group. 
+
+
+
 ## Clone
 ``git clone https://github.com/flyinglightspeck/Group-Formation.git``
 
