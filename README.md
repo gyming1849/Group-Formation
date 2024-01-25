@@ -46,7 +46,7 @@ To add your own shape file,
 With a large point cloud, one may want to use a small number of its points as a starting point. Set `SAMPLE_SIZE` to a smaller number of points and the system will sample a specified number of points from the point cloud to run an algorithm.  If the value of `SAMPLE_SIZE` is set to zero, all points of the specified point cloud will be used.
 
 
-# Running on Amazon AWS
+# Running on Multiple Servers using Amazon AWS
 First, set up a cluster of servers. Ideally, the total number of cores of the servers should equal or be greater than the number of points in the point cloud (number of FLSs).
 
 Set up a multicast domain (For more information on how to create a multicast domain see aws docs: https://docs.aws.amazon.com/vpc/latest/tgw/manage-domain.html)
@@ -74,6 +74,9 @@ Finally, run the `nohup_run.sh` script on the primary instance to run the experi
 After the experiments are finished, you can download the results using `scripts/download.sh`
 
 Use `file.py` to post-process the results and generate the metrics
+
+
+# Running on Multiple Servers using CloudLab
 
 
 # Error with Large Point Clouds
