@@ -10,7 +10,7 @@ Authors:  Hamed Alimohammadzadeh(halimoha@usc.edu) and Shahram Ghandeharizadeh (
 
 
 # Limitations
-  * With large point clouds, the execution of the software may exhaust the max open files supported by the operating system.  See below for how to resolve. 
+  * With large point clouds and the Linux operating system, the execution of the software may exhaust the max open files supported by the operating system.  See below, Error with Large Point Clouds, for how to resolve. 
   * No support for asymmetric groups.  In other words, each algorithm strives to ensure the participation of a member in a group is reciprocated by all the members in that group. 
 
 
