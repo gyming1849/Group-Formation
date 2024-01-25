@@ -36,14 +36,14 @@ The Outring is a synthetically generated point cloud.  Set the value of `R` in `
 
 To run the Outring, set `TEST_ENABLED` to True and `SHAPE` to `outring`.  It will generate the synthetic point cloud in memory and invoke the algorithm specified by the parameter `H` in `config.py`.  The possible values of `H` are:  `canf`, `simpler`, `rs`, `vns`.
 
+For the outring point cloud, modify `NUMBER_OF_FLSS`, and `R`.
+
 ## A Point Cloud
+We provide several point clouds, e.g., a Chess piece.  The value of variables SHAPE and TEST_ENABLED in config.py control the used point cloud used.  Set the `SHAPE` value to the shape name and set the `TEST_ENABLED` to `False`.  The repository comes with the following shapes (possible values of `SHAPE`): `bigbutterfly`, `butterfly`, `cat`, `chess`, `dragon`, `hat`, `racecar`, `skateboard`, `teapot`.
 
-Group-Formation may be used with either a synthetic point cloud (Outring) or an actual point cloud.  We provide several point clouds, e.g., a Chess piece.  The value of variables SHAPE and TEST_ENABLED in config.py control the setting.  For using the shape point clouds, set the `SHAPE` value to the shape name and set the `TEST_ENABLED` to `False`. Otherwise, set the `TEST_ENABLED` to True and `SHAPE` to `outring` for running the algorithm on the synthetically generated Outring point cloud.
+To add your own shape file, 
 
-For shapes, use `SAMPLE_SIZE` to sample a smaller number of points from the point cloud. If set to zero, all points will be used.
-
-For the outring point cloud, modify `NUMBER_OF_FLSS`, and 'R'.
-
+With a large point cloud, one may want to use a small number of its points as a starting point. Set `SAMPLE_SIZE` to a smaller number of points and the system will sample a specified number of points from the point cloud to run an algorithm.  If the value of `SAMPLE_SIZE` is set to zero, all points of the specified point cloud will be used.
 
 
 # Running on Amazon AWS
