@@ -1,6 +1,4 @@
 import copy
-import json
-import select
 import socket
 import pickle
 import threading
@@ -8,7 +6,6 @@ from itertools import combinations
 
 import numpy as np
 from multiprocessing import shared_memory
-import scipy.io
 import time
 import os
 import struct

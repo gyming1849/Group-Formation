@@ -5,7 +5,6 @@ import matplotlib as mpl
 import matplotlib.animation as animation
 from multiprocessing import shared_memory
 import numpy as np
-import scipy
 from matplotlib import rcParams, pylab
 from matplotlib import ticker
 
@@ -38,8 +37,7 @@ def quad():
     fig = plt.figure(figsize=(5.5, 5.5))
 
     for i, shape in enumerate(shapes):
-        mat = scipy.io.loadmat(f'../assets/{shapes[i]}.mat')
-        ptcld = mat['p']
+        ptcld = np.loadtxt(f'assets/{shapes[i]}.txt', delimiter=',')
 
         ticks_gap = 10
         length = math.ceil(np.max(ptcld[:, 0]) / ticks_gap) * ticks_gap
