@@ -1,6 +1,6 @@
 #!/bin/bash
 
-idx=1
-num_of_total_servers=16
-HOSTNAME="k-clique.nova-PG0.clemson.cloudlab.us"
-USERNAME="hamedamz"
+N=16
+REPO_PATH="Group-Formation"
+HOSTNAME="EXPERIMENT.PROJECT.DATACENTER.cloudlab.us"
+USERNAME="ubuntu"

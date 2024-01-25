@@ -2,7 +2,7 @@
 
 source aws_vars.sh
 
-python3 gen_conf.py -t
+python3 gen_conf.py
 
 for (( i=1; i<N; i++ )); do
     server_addr=${USERNAME}@${HOSTNAMES[$i]}
