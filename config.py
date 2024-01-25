@@ -13,7 +13,7 @@ class Config:
     DURATION = 600
     READ_FROM_NPY = 0
     K = 3   # Group size
-    SHAPE = 'chess' # Shape used for forming groups
+    SHAPE = 'outring'  # Shape used for forming groups
     RESULTS_PATH = 'results'
     DEBUG = True
     FILE_NAME_KEYS = ['K']  # list of properties that should be used in the name of results file names
