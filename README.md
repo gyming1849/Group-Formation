@@ -38,6 +38,7 @@ Run `server.py` after adjusting the settings of `config.py` (see below).  The de
 
 # Running using Venv
 
+You can use the `setup_venv.sh` script to create and activate a virtual environment or alternatively follow these steps to set it up manually.
 First create a virtual environment using venv. You can use any name instead of env.
 
 ```
