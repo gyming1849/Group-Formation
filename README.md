@@ -7,6 +7,7 @@ Authors:  Hamed Alimohammadzadeh(halimoha@usc.edu) and Shahram Ghandeharizadeh (
   * Four decentralized algorithms that construct fix-sized groups given either a synthetic or a real point cloud.  The size of a group is denoted as G.
   * Constructs symmetric groups.  This means the participation of a member (an FLS) in a group is reciprocated by all the members in that group.
   * An implementation of OutRing with known optimal solutions.
+  * This implementation launches multiple processes.  Each process emulates a Flying Light Speck, FLS.  One may execute on a single server or execute it on multiple servers.  Both CloudLab and Amazon AWS are supported.
 
 
 # Limitations
@@ -39,8 +40,6 @@ For the outring point cloud, modify `NUMBER_OF_FLSS`, and `R`.
 
 ## A Point Cloud
 We provide several point clouds, e.g., a Chess piece.  The value of variables SHAPE and TEST_ENABLED in config.py control the used point cloud used.  Set the `SHAPE` value to the shape name and set the `TEST_ENABLED` to `False`.  The repository comes with the following shapes (possible values of `SHAPE`): `bigbutterfly`, `butterfly`, `cat`, `chess`, `dragon`, `hat`, `racecar`, `skateboard`, `teapot`.
-
-To add your own shape file, 
 
 With a large point cloud, one may want to use a small number of its points as a starting point. Set `SAMPLE_SIZE` to a smaller number of points and the system will sample a specified number of points from the point cloud to run an algorithm.  If the value of `SAMPLE_SIZE` is set to zero, all points of the specified point cloud will be used.
 
