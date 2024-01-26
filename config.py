@@ -12,11 +12,11 @@ class Config:
     SAMPLE_SIZE = 0
     DURATION = 600
     READ_FROM_NPY = 0
-    K = 3   # Group size
+    G = 3   # Group size
     SHAPE = 'outring'  # Shape used for forming groups
     RESULTS_PATH = 'results'
-    DEBUG = True
-    FILE_NAME_KEYS = ['K']  # list of properties that should be used in the name of results file names
+    DEBUG = False
+    FILE_NAME_KEYS = ['G']  # list of properties that should be used in the name of results file names
     DIR_KEYS = ['H']  # list of properties that should be used in the name of results directory
     SERVER_TIMEOUT = 120
     PROCESS_JOIN_TIMEOUT = 120
@@ -30,5 +30,5 @@ class Config:
     H = "canf"  # valid values for heuristic: simpler, canf, vns, rs
     VNS_TIMEOUT = 0.1
     EXPANSION_TIMEOUT = 0.05
-    ETA = K - 1  # initial eta only effective for h:1 and h:rs
+    ETA = G - 1  # initial eta only effective for h:1 and h:rs
     ETA_STR = "k-1"

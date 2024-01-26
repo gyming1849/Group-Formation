@@ -62,9 +62,9 @@ def aggregate_cliques(indexes, sh_arrs):
     all_neighbors = dict()
     sh_arrays = copy.deepcopy(sh_arrs)
     for k in indexes:
-        all_connections[k + 1] = sh_arrays[k][:K]
-        all_neighbors[k + 1] = sh_arrays[k][K]
-        clique_key = ".".join([str(clique) for clique in sh_arrays[k][:K]])
+        all_connections[k + 1] = sh_arrays[k][:G]
+        all_neighbors[k + 1] = sh_arrays[k][G]
+        clique_key = ".".join([str(clique) for clique in sh_arrays[k][:G]])
         if clique_key in all_cliques:
             all_cliques[clique_key] += 1
         else:
@@ -178,7 +178,7 @@ if __name__ == '__main__':
                 continue
             break
 
-    K = Config.K
+    G = Config.G
     FILE_NAME_KEYS = Config.FILE_NAME_KEYS
 
     dir_name = None
@@ -208,8 +208,8 @@ if __name__ == '__main__':
     if Config.TEST_ENABLED:
         r2 = 1
         r1 = r2 * Config.R
-        n1 = Config.NUMBER_OF_FLSS // K
-        n2 = K
+        n1 = Config.NUMBER_OF_FLSS // G
+        n2 = G
 
         points = []
         for i in range(n1):
@@ -236,7 +236,7 @@ if __name__ == '__main__':
     total_count = point_cloud.shape[0]
 
     gtl_point_cloud = np.random.uniform(0, 5, size=(total_count, 3))
-    sample = np.zeros(K+1, dtype=np.int32)
+    sample = np.zeros(G + 1, dtype=np.int32)
 
     node_point_idx = []
     for i in range(total_count):
@@ -258,8 +258,8 @@ if __name__ == '__main__':
         for i in node_point_idx:
             shm = shared_memory.SharedMemory(create=True, size=sample.nbytes)
             shared_array = np.ndarray(sample.shape, dtype=sample.dtype, buffer=shm.buf)
-            shared_array[:K] = i+1
-            shared_array[K] = 0
+            shared_array[:G] = i + 1
+            shared_array[G] = 0
 
             shared_arrays[i] = shared_array
             shared_memories[i] = shm
@@ -278,7 +278,7 @@ if __name__ == '__main__':
             dispatcher = gtl_point_cloud[i]
             p = worker.WorkerProcess(
                 count, i + 1, gtl_point_cloud[i], dispatcher, shm.name, results_directory,
-                K, sorted_neighbors, dists)
+                G, sorted_neighbors, dists)
             p.start()
             processes.append(p)
     except OSError as e:
@@ -332,7 +332,7 @@ if __name__ == '__main__':
                         else:
                             cliques[key] = size
 
-            clique_sizes = filter(lambda x: x == K, cliques.values())
+            clique_sizes = filter(lambda x: x == G, cliques.values())
             single_sizes = filter(lambda x: x == 1, cliques.values())
             d_hash = dict_hash(cliques)
             if d_hash != last_hash:
@@ -343,7 +343,7 @@ if __name__ == '__main__':
                 print(cliques)
                 break
             last_hash = d_hash
-            if len(list(clique_sizes)) == total_count // K and len(list(single_sizes)) == total_count % K:
+            if len(list(clique_sizes)) == total_count // G and len(list(single_sizes)) == total_count % G:
                 print(cliques)
                 # print(connections)
                 break
@@ -399,7 +399,7 @@ if __name__ == '__main__':
 
             group_points = [gtl_point_cloud[ci - 1] for ci in c]
             num_members = len(set(c))
-            if num_members == K:
+            if num_members == G:
                 c_count = 0
                 dists = []
                 for el_i, el_j in combinations(group_points, 2):

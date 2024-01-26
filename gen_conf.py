@@ -15,11 +15,11 @@ def_general_conf = {
     "SAMPLE_SIZE": "0",
     "DURATION": "600",
     "READ_FROM_NPY": "0",
-    "K": "3",
+    "G": "3",
     "SHAPE": "test",
     "RESULTS_PATH": "results",
     "DEBUG": "False",
-    "FILE_NAME_KEYS": "['K']",
+    "FILE_NAME_KEYS": "['G']",
     "DIR_KEYS": "['H']",
     "SERVER_TIMEOUT": "120",
     "PROCESS_JOIN_TIMEOUT": "120",
@@ -33,8 +33,8 @@ def_general_conf = {
     "H": "canf",  # valid values for heuristic: simpler, canf, vns, rs
     "VNS_TIMEOUT": "0.1",
     "EXPANSION_TIMEOUT": "0.05",
-    "ETA": "K - 1",  # initial eta only effective for H = simpler and H = rs
-    "ETA_STR": "k-1",
+    "ETA": "G - 1",  # initial eta only effective for H = simpler and H = rs
+    "ETA_STR": "G-1",
 }
 
 general_props = [
@@ -43,7 +43,7 @@ general_props = [
         "values": ["'chess'", "'dragon'"]
     },
     {
-        "keys": ["K"],
+        "keys": ["G"],
         "values": ["3", "15"]
     },
     {
@@ -53,10 +53,10 @@ general_props = [
 
     # you can combine multiple properties if you don't need all the combinations
     # {
-    #     "keys": ["SHAPE", "K"],
+    #     "keys": ["SHAPE", "G"],
     #     "values": [
-    #         {"SHAPE": "'chess'", "K": "3"},
-    #         {"SHAPE": "'dragon'", "K": "20"},
+    #         {"SHAPE": "'chess'", "G": "3"},
+    #         {"SHAPE": "'dragon'", "G": "20"},
     #     ]
     # },
 ]

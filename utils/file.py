@@ -198,7 +198,7 @@ def combine_xlsx(directory, rs):
     for file in sorted(xlsx_files):
         print(file)
         df = pd.read_excel(file, sheet_name='metrics')
-        m = re.search(r'K:(\d+)_R:(\d+)', file)
+        m = re.search(r'G:(\d+)_R:(\d+)', file)
         k = m.group(1)
         r = m.group(2)
 
@@ -282,11 +282,11 @@ def combine_xlsx_with_formula(directory, rs, shape=False):
 
         df = df['metrics']
         if shape:
-            m = re.search(r'(\w+)_K:(\d+)', file)
+            m = re.search(r'(\w+)_G:(\d+)', file)
             r = m.group(1)
             k = m.group(2)
         else:
-            m = re.search(r'K:(\d+)_R:(\d+)', file)
+            m = re.search(r'G:(\d+)_R:(\d+)', file)
             k = m.group(1)
             r = m.group(2)
 
@@ -364,7 +364,7 @@ def combine_xlsx_with_formula_static(directory, rs):
         ])
 
         df = df['metrics']
-        m = re.search(r'K:(\d+)_R:(\d+)', file)
+        m = re.search(r'G:(\d+)_R:(\d+)', file)
         k = m.group(1)
         r = m.group(2)
         df2 = pd.DataFrame([k, r])
@@ -608,9 +608,9 @@ if __name__ == "__main__":
 
     path = f"{path}/processed"
     for g in groups:
-        dir_name = f"K{g}"
+        dir_name = f"G{g}"
         subprocess.call(["mkdir", "-p", f"{path}/{dir_name}"])
-        subprocess.call(f"mv {path}/*_K:{g}_*.xlsx {path}/{dir_name}", shell=True)
+        subprocess.call(f"mv {path}/*_G:{g}_*.xlsx {path}/{dir_name}", shell=True)
         dfs.append(combine_xlsx_with_formula(f"{path}/{dir_name}", rs, shape=True))
 
     combine_groups(path, f'summary_{shape}_{alg}_g{g}', dfs, groups, rs, 10)
