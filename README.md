@@ -6,7 +6,8 @@ Authors:  Hamed Alimohammadzadeh(halimoha@usc.edu) and Shahram Ghandeharizadeh (
 
   * Four decentralized algorithms that construct fix-sized groups given either a synthetic or a real point cloud.  The size of a group is denoted as G.
   * Constructs symmetric groups.  This means the participation of a member (an FLS) in a group is reciprocated by all the members in that group.
-  * An implementation of OutRing with known optimal solutions.
+  * An implementation of a synthetically generated point cloud (named OutRing) with known optimal solutions.
+  * This implementation launches multiple processes.  Each process emulates a Flying Light Speck, FLS.  One may execute on a single server or execute it on multiple servers.  Both CloudLab and Amazon AWS are supported.
 
 
 # Limitations
@@ -67,21 +68,19 @@ You can now run `server.py`. Finally, deactivate the virtual environment by runn
 
 
 ## Outring
-The Outring is a synthetically generated point cloud.  Set the value of `R` in `config.py` to a large value, say 1000, to generate sparse point clouds.  Such point clouds have known optimal solutions.  One may evaluate the implementation of the alternative algorithms to evaluate if they compute the optimal solution.
+The Outring is a synthetically generated point cloud.  Set the value of `R` in `config.py` to a large value, say 1000, to generate sparse point clouds.  Such point clouds have known optimal solutions.  One may evaluate the implementation of the alternative algorithms to show they compute the optimal solution with an arbitrary number of FLSs and group sizes.
 
 To run the Outring, set `TEST_ENABLED` to True and `SHAPE` to `outring`.  It will generate the synthetic point cloud in memory and invoke the algorithm specified by the parameter `H` in `config.py`.  The possible values of `H` are:  `canf`, `simpler`, `rs`, `vns`.
 
-For the outring point cloud, modify `NUMBER_OF_FLSS`, and `R`.
+With the Outring, the number of points in a point cloud is specified by the value of `NUMBER_OF_FLSS` in `config.py`.  It should be a multiple of the group size.  Otherwise, we adjust the value of `NUMBER_OF_FLSS` to be a multiple of group size and continue execution.
 
 ## A Point Cloud
 We provide several point clouds, e.g., a Chess piece.  The value of variables SHAPE and TEST_ENABLED in config.py control the used point cloud used.  Set the `SHAPE` value to the shape name and set the `TEST_ENABLED` to `False`.  The repository comes with the following shapes (possible values of `SHAPE`): `bigbutterfly`, `butterfly`, `cat`, `chess`, `dragon`, `hat`, `racecar`, `skateboard`, `teapot`.
 
-To add your own shape file, 
-
 With a large point cloud, one may want to use a small number of its points as a starting point. Set `SAMPLE_SIZE` to a smaller number of points and the system will sample a specified number of points from the point cloud to run an algorithm.  If the value of `SAMPLE_SIZE` is set to zero, all points of the specified point cloud will be used.
 
 
-# Running on Multiple Servers using Amazon AWS
+# Running on Multiple Servers: Amazon AWS
 First, set up a cluster of servers. Ideally, the total number of cores of the servers should equal or be greater than the number of points in the point cloud (number of FLSs).
 
 Set up a multicast domain (For more information on how to create a multicast domain see aws docs: https://docs.aws.amazon.com/vpc/latest/tgw/manage-domain.html)
@@ -111,7 +110,7 @@ After the experiments are finished, you can download the results using `scripts/
 Use `file.py` to post-process the results and generate the metrics
 
 
-# Running on Multiple Servers using CloudLab
+# Running on Multiple Servers: CloudLab
 
 
 # Error with Large Point Clouds
