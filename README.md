@@ -6,7 +6,7 @@ Authors:  Hamed Alimohammadzadeh(halimoha@usc.edu) and Shahram Ghandeharizadeh (
 
   * Four decentralized algorithms that construct fix-sized groups given either a synthetic or a real point cloud.  The size of a group is denoted as G.
   * Constructs symmetric groups.  This means the participation of a member (an FLS) in a group is reciprocated by all the members in that group.
-  * An implementation of OutRing with known optimal solutions.
+  * An implementation of a synthetically generated point cloud (named OutRing) with known optimal solutions.
   * This implementation launches multiple processes.  Each process emulates a Flying Light Speck, FLS.  One may execute on a single server or execute it on multiple servers.  Both CloudLab and Amazon AWS are supported.
 
 
