@@ -29,6 +29,8 @@ We recommend using PyCharm, enabling the software to run across mutliple operati
 
 Software runs using Python3 (version 3.9.0) or a virtual environment.  We describe each in turn.  
 
+# Running using a (PyCharm) Terminal
+
 Run ``bash setup.sh`` to install the requirements.
 
 The variables specified in `config.py` control settings.  
