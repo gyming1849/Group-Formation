@@ -27,8 +27,6 @@ This software was implemented and tested using Python 3.9.0.
 
 We recommend using PyCharm, enabling the software to run across mutliple operating systems, e.g., Windows, MacOS, etc.
 
-Software runs using Python3 (version 3.9.0) or a virtual environment.  We describe each in turn.  
-
 ## Running using a (PyCharm) Terminal
 
 Run ``bash setup.sh`` to install the requirements.
