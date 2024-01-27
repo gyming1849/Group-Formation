@@ -9,7 +9,7 @@ Authors:  Hamed Alimohammadzadeh(halimoha@usc.edu) and Shahram Ghandeharizadeh (
   * A state machine that implements a decentralized algorithm.
   * An implementation of a synthetically generated point cloud (named OutRing) with known optimal solutions.
   * Launches multiple processes, one process per Flying Light Speck, FLS.  With large point clouds (FLSs), the software scales to utilize multiple servers. Both CloudLab and Amazon AWS are supported.
-  * Visualizes the realized grouping.  When the `DEBUG` flag is true, the resulting visualization is stored in the directory starting with `results`.  Otherwise, it displays the generated image without saving it.
+  * Visualizes the realized grouping.  When the `DEBUG` flag is True, the resulting jpeg figure is stored in a sub-directory of `results`.  With `DEBUG` set to False, it displays the jpeg image without saving it.
 
 
 # Limitations
