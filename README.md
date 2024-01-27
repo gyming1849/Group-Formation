@@ -23,7 +23,11 @@ git clone https://github.com/flyinglightspeck/Group-Formation.git
 
 # Running on a Laptop or a Server
 
-You may execute this program by using Python3 (we tested with Python 3.9) or a virtual environment.  We describe each in turn.  We recommend using PyCharm as it works across multiple operating systems (Windows, MacOS).
+This software was implemented and tested using Python 3.9.0.
+
+We recommend using PyCharm, enabling the software to run across mutliple operating systems, e.g., Windows, MacOS, etc.
+
+Software runs using Python3 (version 3.9.0) or a virtual environment.  We describe each in turn.  
 
 Run ``bash setup.sh`` to install the requirements.
 
