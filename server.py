@@ -187,18 +187,20 @@ if __name__ == '__main__':
 
         current_date_time = datetime.now().strftime("%H:%M:%S_%m:%d:%Y")
         if len(FILE_NAME_KEYS):
-            keys = "_".join(f"{k}:{Config.__getattribute__(Config, k)}" for k in FILE_NAME_KEYS)
+            keys = "_".join(f"{k}{Config.__getattribute__(Config, k)}" for k in FILE_NAME_KEYS)
         else:
             keys = current_date_time
         file_name = f"{Config.SHAPE}_{keys}_{experiment_name}"
 
         if len(Config.DIR_KEYS):
-            dir_name = "_".join(f"{k}:{Config.__getattribute__(Config, k)}" for k in Config.DIR_KEYS)
+            dir_name = "_".join(f"{k}{Config.__getattribute__(Config, k)}" for k in Config.DIR_KEYS)
 
     main_dir = Config.RESULTS_PATH if dir_name is None else os.path.join(Config.RESULTS_PATH, Config.SHAPE, dir_name)
     results_directory = os.path.join(main_dir, experiment_name)
     shape_directory = main_dir
     figure_directory = os.path.join(shape_directory, 'figures')
+    # print(results_directory)
+    # exit()
     if not Config.DEBUG:
         if not os.path.exists(results_directory):
             os.makedirs(os.path.join(results_directory, 'json'), exist_ok=True)
