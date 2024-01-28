@@ -5,6 +5,7 @@ import struct
 import numpy as np
 from constants import Constants
 from config import Config
+import platform
 
 
 class WorkerSocket:
@@ -17,7 +18,11 @@ class WorkerSocket:
 
     def create_udp_socket(self):
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
-        sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEPORT, 1)
+
+        if platform.system() == 'Windows':
+            sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        else:
+            sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEPORT, 1)
         sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
         sock.bind(Constants.WORKER_ADDRESS)
         self.sock = sock
