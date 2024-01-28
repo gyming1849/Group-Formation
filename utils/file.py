@@ -164,23 +164,23 @@ def write_configs(directory, date_time):
 
 
 def combine_csvs(directory, xslx_dir, file_name):
-    csv_files = glob.glob(f"{directory}/*.csv")
+    csv_files = glob.glob(os.path.join(directory, "*.csv"))
 
     with pd.ExcelWriter(os.path.join(xslx_dir, f'{file_name}.xlsx')) as writer:
         for csv_file in csv_files:
             df = pd.read_csv(csv_file)
-            sheet_name = csv_file.split('/')[-1][:-4]
+            sheet_name = os.path.split(csv_file)[-1][:-4]
             df.to_excel(writer, sheet_name=sheet_name, index=False)
 
 
 def combine_csvs_with_formula(directory, xslx_dir, file_name):
-    csv_files = glob.glob(f"{directory}/*.csv")
+    csv_files = glob.glob(os.path.join(directory, "*.csv"))
 
     with pd.ExcelWriter(os.path.join(xslx_dir, f'{file_name}.xlsx'), engine='xlsxwriter',
                         engine_kwargs={'options': {'strings_to_numbers': True}}) as writer:
         for csv_file in csv_files:
             df = pd.read_csv(csv_file)
-            sheet_name = csv_file.split('/')[-1][:-4]
+            sheet_name = os.path.split(csv_file)[-1][:-4]
             df.to_excel(writer, sheet_name=sheet_name, index=False)
 
             if sheet_name == 'metrics':
@@ -194,11 +194,11 @@ def combine_xlsx(directory, rs):
     for r in rs:
         rdfs[str(r)] = []
 
-    xlsx_files = glob.glob(f"{directory}/*.xlsx")
+    xlsx_files = glob.glob(os.path.join(directory, "*.xlsx"))
     for file in sorted(xlsx_files):
         print(file)
         df = pd.read_excel(file, sheet_name='metrics')
-        m = re.search(r'G:(\d+)_R:(\d+)', file)
+        m = re.search(r'G(\d+)_R(\d+)', file)
         k = m.group(1)
         r = m.group(2)
 
@@ -237,7 +237,7 @@ def combine_xlsx_with_formula(directory, rs, shape=False):
         'max num heuristic ran',
     ]
 
-    xlsx_files = glob.glob(f"{directory}/*.xlsx")
+    xlsx_files = glob.glob(os.path.join(directory, "*.xlsx"))
     for file in sorted(xlsx_files):
         print(file)
         try:
@@ -282,11 +282,11 @@ def combine_xlsx_with_formula(directory, rs, shape=False):
 
         df = df['metrics']
         if shape:
-            m = re.search(r'(\w+)_G:(\d+)', file)
+            m = re.search(r'(\w+)_G(\d+)', file)
             r = m.group(1)
             k = m.group(2)
         else:
-            m = re.search(r'G:(\d+)_R:(\d+)', file)
+            m = re.search(r'G(\d+)_R(\d+)', file)
             k = m.group(1)
             r = m.group(2)
 
@@ -330,7 +330,7 @@ def combine_xlsx_with_formula_static(directory, rs):
         'max num heuristic ran',
     ]
 
-    xlsx_files = glob.glob(f"{directory}/*.xlsx")
+    xlsx_files = glob.glob(os.path.join(directory, "*.xlsx"))
     for file in sorted(xlsx_files):
         print(file)
         df = pd.read_excel(file, sheet_name=['metrics', 'nodes'])
@@ -364,7 +364,7 @@ def combine_xlsx_with_formula_static(directory, rs):
         ])
 
         df = df['metrics']
-        m = re.search(r'G:(\d+)_R:(\d+)', file)
+        m = re.search(r'G(\d+)_R(\d+)', file)
         k = m.group(1)
         r = m.group(2)
         df2 = pd.DataFrame([k, r])
@@ -452,13 +452,13 @@ def read_cliques_xlsx(path):
 
 
 def elastic_post_process(path):
-    xlsx_files = glob.glob(f"{path}/*.xlsx")
+    xlsx_files = glob.glob(os.path.join(path, "*.xlsx"))
 
     for f in xlsx_files:
         m = re.search(r'(\d+_(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)_\d+_\d+_\d+)', f)
         # m = re.search(r'_(\d+).xlsx$', f)
         datetime = m.group(1)
-        exp_path = f"{path}/{datetime}"
+        exp_path = os.path.join(path, datetime)
         create_csv_from_json(exp_path)
 
     time.sleep(1)
@@ -468,14 +468,14 @@ def elastic_post_process(path):
         # m = re.search(r'_(\d+).xlsx$', f)
         datetime = m.group(1)
         print(datetime)
-        exp_path = f"{path}/{datetime}"
-        out_path = f"{path}/processed"
-        combine_csvs(exp_path, out_path, f.split('/')[-1][:-5])
+        exp_path = os.path.join(path, datetime)
+        out_path = os.path.join(path, "processed")
+        combine_csvs(exp_path, out_path, os.path.split(f)[-1][:-5])
 
 
 def merge_network_heuristic_timelines(path, fid='*'):
-    network_files = glob.glob(f"{path}/nt_{fid}.n.json")
-    heuristic_files = glob.glob(f"{path}/ht_{fid}.h.json")
+    network_files = glob.glob(os.path.join(path, f"nt_{fid}.n.json"))
+    heuristic_files = glob.glob(os.path.join(path, f"ht_{fid}.h.json"))
     network_timelines = []
     heuristic_timelines = []
 
@@ -585,7 +585,7 @@ def gen_sw_charts(path_1, path_2, fid):
     fig.tight_layout()
     # plt.xlabel('Time (Second)')
     # plt.show()
-    plt.savefig(f'/Users/hamed/Desktop/bw_comp_canf_rs2.png', dpi=300)
+    plt.savefig(f'bw_comp_canf_rs2.png', dpi=300)
 
 
 if __name__ == "__main__":
@@ -595,7 +595,7 @@ if __name__ == "__main__":
     shape = 'chess'
     g = 10
     alg = 'rs'
-    path = f"PATH_TO_RESULTS/{shape}_{alg}_g{g}"
+    path = os.path.join("PATH_TO_RESULTS", f"{shape}_{alg}_g{g}")
     os.makedirs(os.path.join(path, 'processed'), exist_ok=True)
     elastic_post_process(path)
 
@@ -606,11 +606,11 @@ if __name__ == "__main__":
 
     dfs = []
 
-    path = f"{path}/processed"
+    path = os.path.join(path, "processed")
     for g in groups:
         dir_name = f"G{g}"
-        subprocess.call(["mkdir", "-p", f"{path}/{dir_name}"])
-        subprocess.call(f"mv {path}/*_G:{g}_*.xlsx {path}/{dir_name}", shell=True)
-        dfs.append(combine_xlsx_with_formula(f"{path}/{dir_name}", rs, shape=True))
+        subprocess.call(["mkdir", "-p", f"\"{os.path.join(path, dir_name)}\""])
+        subprocess.call(f"mv {os.path.join(path, '*_G{g}_*.xlsx')} {os.path.join(path, dir_name)}", shell=True)
+        dfs.append(combine_xlsx_with_formula(os.path.join(path, dir_name), rs, shape=True))
 
     combine_groups(path, f'summary_{shape}_{alg}_g{g}', dfs, groups, rs, 10)
