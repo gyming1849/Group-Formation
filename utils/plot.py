@@ -68,7 +68,7 @@ def quad():
     plt.margins(x=0, y=0)
     plt.tight_layout()
     # plt.show()
-    plt.savefig(f'/Users/hamed/Desktop/4_shapes.png', dpi=300)
+    plt.savefig(f'4_shapes.png', dpi=300)
 
 
 def p_rs(F, G, eta):
@@ -100,7 +100,7 @@ def rs_probability():
     ax.spines['right'].set_color('white')
     plt.tight_layout()
     # plt.show()
-    plt.savefig('/Users/hamed/Desktop/rs_prop_f30_f60_f90_g.png', dpi=300)
+    plt.savefig('rs_prop_f30_f60_f90_g.png', dpi=300)
 
 
 def rs_probability_2():
@@ -135,7 +135,7 @@ def rs_probability_2():
     ax.spines['right'].set_color('white')
     plt.tight_layout()
     # plt.show()
-    plt.savefig('/Users/hamed/Desktop/rs_prop_g3_g5_g10_f.png', dpi=300)
+    plt.savefig('rs_prop_g3_g5_g10_f.png', dpi=300)
 
 
 def boxplot():
@@ -205,9 +205,9 @@ def boxplot():
 
     plt.tight_layout()
     # plt.show()
-    # plt.savefig('/Users/hamed/Desktop/exec_time_shapes_g10_log.png', dpi=300)
-    plt.savefig('/Users/hamed/Desktop/avg_dist_shapes_g10.png', dpi=300)
-    # plt.savefig('/Users/hamed/Desktop/exec_time_racecar_g.png', dpi=300)
+    # plt.savefig('exec_time_shapes_g10_log.png', dpi=300)
+    plt.savefig('avg_dist_shapes_g10.png', dpi=300)
+    # plt.savefig('exec_time_racecar_g.png', dpi=300)
 
 
 if __name__ == '__main__':

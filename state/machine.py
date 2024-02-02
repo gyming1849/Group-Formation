@@ -4,7 +4,6 @@ import random
 import time
 
 import numpy as np
-import threading
 from message import Message, MessageTypes
 from config import Config
 from .types import StateTypes
@@ -125,14 +124,11 @@ class StateMachine:
 
         if Config.DEBUG:
             if len(self.get_c()):
-                # self.context.set_pair(self.get_m().el)
                 print(f"{self.context.fid} is paired with {self.get_c()} w={self.get_w()}"
                       f" num_heuristic_invoked={self.num_heuristic_invoked}")
 
             else:
-                # self.context.set_pair(self.context.el)
                 print(f"{self.context.fid} is single num_heuristic_invoked={self.num_heuristic_invoked}")
-                # print(self.context.neighbors)
 
     def sort_neighbors(self):
         if Config.OPT_SORT:
@@ -206,37 +202,6 @@ class StateMachine:
 
         return tuple(random.sample(self.sorted_neighbor_fids[:self.eta], self.context.k - 1)), self.eta - 1
 
-    # def heuristic_2(self, c):
-    #     candidates = []
-    #     last_idx = 0
-    #
-    #     # centrally sorted neighbor not used anymore
-    #     for i in range(len(self.context.sorted_neighbors)):
-    #         fid = self.context.sorted_neighbors[i]
-    #         if fid in self.context.neighbors:
-    #             c_n = self.context.neighbors[fid].c
-    #             if len(c_n):
-    #                 if self.context.fid in c_n:
-    #                     candidates.append(fid)
-    #                 else:
-    #                     for n in c_n:
-    #                         new_c = tuple(nc for nc in c_n if nc != n) + (fid,)
-    #                         if all(nc in self.context.neighbors for nc in new_c):
-    #                             if self.attr_v(new_c) > self.attr_v(c):
-    #                                 candidates.append(fid)
-    #                                 break
-    #             else:
-    #                 candidates.append(fid)
-    #
-    #         if len(candidates) == self.context.k - 1:
-    #             last_idx = i
-    #             break
-    #
-    #     if len(candidates) == self.context.k - 1:
-    #         return tuple(candidates), last_idx
-    #
-    #     return (), last_idx
-
     def heuristic_2_1(self, c):
         candidates = []
         last_idx = 0
@@ -278,10 +243,8 @@ class StateMachine:
             c = self.get_c()
 
         n_hash = dict_hash(self.context.fid_to_w)
-        # timestamp = time.time()
         if n_hash != self.last_neighbors_hash or random.random() < 0.2:
             self.last_neighbors_hash = n_hash
-            # self.last_h_ran_time = timestamp
 
             for n in self.context.neighbors.values():
                 if self.context.fid in n.c:
@@ -344,10 +307,6 @@ class StateMachine:
             self.context.log_sent_message(msg, length)
         else:
             self.context.log_dropped_send()
-
-    # def send_to_server(self, msg):
-    #     msg.from_fls(self.context).to_server()
-    #     self.sock.send_to_server(msg)
 
     def start_timers(self):
         pass
