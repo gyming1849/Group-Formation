@@ -14,7 +14,7 @@ from utils import write_json, dict_hash
 
 
 class StateMachine:
-    def __init__(self, context, sock, metrics, event_queue):
+    def __init__(self, context, sock, metrics, weight_policy, event_queue):
         self.state = None
         self.context = context
         self.metrics = metrics
@@ -30,6 +30,7 @@ class StateMachine:
         self.last_h_ran_time = 0
         self.solution_range = 0
         self.sorted_neighbor_fids = []
+        self.weight_policy = weight_policy
 
     def get_w(self):
         return self.context.w
@@ -44,16 +45,7 @@ class StateMachine:
         self.context.c = c
 
     def get_w_v(self, c):
-        if len(c):
-            w = 0
-            els = [self.context.el] + [self.context.neighbors[i].el for i in c]
-            for el_i, el_j in combinations(els, 2):
-                dist = np.linalg.norm(el_i - el_j)
-                if dist == 0:
-                    dist = 1e-10
-                w += round(1 / dist, 4)
-            return (round(w, 4),) + tuple(sorted((self.context.fid,) + c))
-        return -1,
+        return self.weight_policy.compute(c, self.context.fid, self.context.el, self.context.neighbors)
 
     def is_proper_v(self, c):
         new_w = self.get_w_v(c)
