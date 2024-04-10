@@ -8,7 +8,7 @@ class Config:
     DECELERATION = 6
     MAX_SPEED = 6
     DISPLAY_CELL_SIZE = 0.05
-    BUSY_WAITING = False
+    BUSY_WAITING = True
     SAMPLE_SIZE = 0
     DURATION = 600
     READ_FROM_NPY = 0
