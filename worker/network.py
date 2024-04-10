@@ -50,6 +50,8 @@ class NetworkThread(threading.Thread):
             dist = np.linalg.norm(msg.el - self.context.el)
             if dist > msg.range:
                 return False
+        if msg.is_cluster == self.context.is_cluster:
+            return False
         return True
 
     @staticmethod

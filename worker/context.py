@@ -5,10 +5,11 @@ from multiprocessing import shared_memory
 import velocity
 from config import Config
 from .history import History
+import logging
 
 
 class WorkerContext:
-    def __init__(self, count, fid, gtl, el, shm_name, metrics, k, sorted_neighbors, sorted_dist):
+    def __init__(self, count, fid, gtl, el, shm_name, metrics, k, sorted_neighbors, sorted_dist, is_cluster):
         self.count = count
         self.fid = fid
         self.gtl = gtl
@@ -17,9 +18,10 @@ class WorkerContext:
         self.swarm_id = self.fid
         self.neighbors = dict()
         self.fid_to_w = dict()
+        self.neighbors_num = dict()
         self.sorted_dist = sorted_dist
         self.sorted_neighbors = sorted_neighbors
-        self.radio_range = 1 if Config.H == 'canf' else Config.MAX_RANGE
+        self.radio_range = 50
         self.max_range = Config.MAX_RANGE
         self.num_expansions = 0
         self.num_neighbor_expansions = 0
@@ -37,11 +39,12 @@ class WorkerContext:
         self.k = k
         self.history = History(2)
         self.num_neighbors = 0
+        self.is_cluster = is_cluster
 
     def set_pair(self):
         if self.shm_name:
             shared_mem = shared_memory.SharedMemory(name=self.shm_name)
-            shared_array = np.ndarray((self.k+1,), dtype=np.int32, buffer=shared_mem.buf)
+            shared_array = np.ndarray((self.k + 1,), dtype=np.int32, buffer=shared_mem.buf)
             shared_array[:self.k] = sorted([self.fid] + list(self.c))
             shared_mem.close()
 
@@ -50,7 +53,7 @@ class WorkerContext:
             self.num_neighbors = len(self.neighbors)
             if self.shm_name:
                 shared_mem = shared_memory.SharedMemory(name=self.shm_name)
-            shared_array = np.ndarray((self.k+1,), dtype=np.int32, buffer=shared_mem.buf)
+            shared_array = np.ndarray((self.k + 1,), dtype=np.int32, buffer=shared_mem.buf)
             shared_array[self.k] = len(self.neighbors)
             shared_mem.close()
 
@@ -104,15 +107,15 @@ class WorkerContext:
         dur = vm.total_time
         # self.log_wait_time(dur)
 
-        if Config.BUSY_WAITING:
-            fin_time = time.time() + dur
-            while True:
-                if time.time() >= fin_time:
-                    break
-        else:
-            time.sleep(dur)
+        # if Config.BUSY_WAITING:
+        #     fin_time = time.time() + dur
+        #     while True:
+        #         if time.time() >= fin_time:
+        #             break
+        # else:
+        #     time.sleep(dur)
 
-        self.set_el(dest)
+        self.set_el(self.el + erred_v)
 
     def add_dead_reckoning_error(self, vector):
         if vector[0] or vector[1]:
@@ -140,12 +143,65 @@ class WorkerContext:
 
     def update_neighbor(self, ctx):
         if ctx.fid:
+            # if self.neighbors_num[ctx.fid] is None:
+            #     self.neighbors_num[ctx.fid] = 1
+            # else:
+            #     self.neighbors_num[ctx.fid] = self.neighbors_num[ctx.fid] + 1
+            flag = True
+            if ctx.fid in self.neighbors and np.sum((self.neighbors[ctx.fid].el - ctx.el) ** 2) < 0.00001:
+                flag = False
             self.neighbors[ctx.fid] = ctx
             self.fid_to_w[ctx.fid] = ctx.w
             if ctx.range > self.radio_range:
                 self.radio_range = ctx.range
                 self.num_neighbor_expansions += 1
             self.set_num_neighbors()
+
+    def calc_new_position(self):
+        arrays_sum = None
+        array_num = 0
+
+        for fls in self.neighbors:
+            ctx = self.neighbors[fls]
+            array_num += 1
+            # print("Clent ", ctx.fid, " :", ctx.el)
+            if arrays_sum is None:
+                arrays_sum = ctx.el
+            else:
+                arrays_sum += ctx.el
+
+        if arrays_sum is None:
+            # print("NewPos: " + str(arrays_sum))
+            return -1
+        arrays_sum = arrays_sum / array_num
+        print("Server ", self.fid, " :", len(self.neighbors), arrays_sum ,self.el, np.sum((arrays_sum - self.el) ** 2))
+        # if np.sum((arrays_sum - self.el) ** 2) < 0.001:
+            # return 0
+        self.move(arrays_sum - self.el)
+        # print("NewPos: ", arrays_sum)
+        self.clear_neighbor()
+        return 1
+
+    def choose_cluster(self):
+        arrays_sum = 999999
+        choose_ctx = None
+        if len(self.neighbors) != 12:
+            return None
+        for fls in self.neighbors:
+            ctx = self.neighbors[fls]
+            # print("fls ", self.fid, " : id: ", ctx.fid, " ", ctx.el)
+            # logging.info(f"fls {self.fid} : id: {ctx.id} {ctx.el}")
+            if arrays_sum > np.sum((ctx.el-self.el) ** 2):
+                arrays_sum = np.sum((ctx.el-self.el) ** 2)
+                choose_ctx = ctx
+        print("fls ", self.fid, " : len: ", len(self.neighbors), "choose_ctx: ", choose_ctx.fid)
+        return choose_ctx
+
+    def clear_neighbor(self):
+        self.neighbors_num.clear()
+        self.neighbors.clear()
+        self.fid_to_w.clear()
+        self.set_num_neighbors()
 
     def double_range(self):
         if self.radio_range * 2 <= self.max_range:

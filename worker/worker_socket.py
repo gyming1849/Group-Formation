@@ -29,8 +29,9 @@ class WorkerSocket:
 
     def create_multicast_socket(self):
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEPORT, 1)
+        # sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEPORT, 1)
         # ttl = struct.pack('b', 1)
+        sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         # sock.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_TTL, ttl)
         sock.bind(Constants.WORKER_ADDRESS)
         # add the socket to the multicast group on all interfaces.

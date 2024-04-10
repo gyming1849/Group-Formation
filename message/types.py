@@ -14,6 +14,9 @@ class MessageTypes(Enum):
     EXPLORE = 9
     EXPLORE_ACK = 10
     EXPAND_RANGE = 11
+    CLUSTER_POS = 12
+    NODE_POS = 13
+    TIME_CLOCK = 14
 
     def get_cat(self):
         pass

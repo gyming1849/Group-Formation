@@ -13,7 +13,7 @@ from utils import write_json, dict_hash
 
 
 class StateMachine:
-    def __init__(self, context, sock, metrics, weight_policy, event_queue):
+    def __init__(self, context, sock, metrics, weight_policy, event_queue, is_cluster):
         self.state = None
         self.context = context
         self.metrics = metrics
@@ -30,6 +30,11 @@ class StateMachine:
         self.solution_range = 0
         self.sorted_neighbor_fids = []
         self.weight_policy = weight_policy
+        self.is_cluster = is_cluster
+        self.clock = 0
+        self.choose_ctx = None
+        if not is_cluster:
+            self.clock = 3
 
     def get_w(self):
         return self.context.w
@@ -147,158 +152,58 @@ class StateMachine:
             self.context.double_range()
             self.last_expanded_time = timestamp
 
-    def vns_shake(self, c, d):
-        u = set(random.sample(c, d))
-        n = list(set(self.context.neighbors.keys()) - set(c))
-        if len(n) >= len(u):
-            u_star = set(random.sample(n, len(u)))
-            return tuple((set(c) - u) | u_star)
-        return c
-
-    def vns_local_search(self, c):
-        for u in c:
-            for u_star in list(set(self.context.neighbors.keys()) - set(c)):
-                c_prime = tuple((set(c) - {u}) | {u_star})
-                if self.attr_v(c_prime) > self.attr_v(c):
-                    return c_prime
-        return c
-
-    def heuristic_vns(self, c_opt):
-        if len(self.context.neighbors.keys()) < self.context.k - 1:
-            return (), -1
-
-        start_time = time.time()
-
-        if not len(c_opt):
-            c_opt = tuple(random.sample(self.context.neighbors.keys(), self.context.k - 1))
-
-        while time.time() - start_time < Config.VNS_TIMEOUT:
-            d = 1
-            while d < self.context.k:
-                c = self.vns_shake(c_opt, d)
-                c_prime = self.vns_local_search(c)
-                if self.attr_v(c_prime) > self.attr_v(c_opt):
-                    c_opt = c_prime
-                    d = 1
-                else:
-                    d += 1
-        return c_opt, -1
-
-    def heuristic_rs(self, c_cur):
-        if len(self.context.neighbors.keys()) < self.eta:
-            return (), -1
-        c = c_cur
-        subset = set(c_cur) | set(random.sample(self.context.neighbors.keys(), self.eta))
-        for u in combinations(subset, self.context.k - 1):
-            if self.attr_v(u) > self.attr_v(c):
-                c = u
-        return c, -1
-
-    def heuristic_1(self, c):
-        self.sort_neighbors()
-
-        if len(self.sorted_neighbor_fids) < self.eta:
-            return (), -1
-
-        return tuple(random.sample(self.sorted_neighbor_fids[:self.eta], self.context.k - 1)), self.eta - 1
-
-    def heuristic_2_1(self, c):
-        candidates = []
-        last_idx = 0
-
-        if len(self.context.neighbors) < self.context.k - 1:
-            self.expand_range()
-            return (), last_idx
-
-        self.sort_neighbors()
-
-        for i, fid in enumerate(self.sorted_neighbor_fids):
-            c_n = self.context.neighbors[fid].c
-            if len(c_n):
-                if self.context.fid in c_n:
-                    candidates.append(fid)
-                else:
-                    for n in c_n:
-                        new_c = tuple(nc for nc in c_n if nc != n) + (fid,)
-                        if all(nc in self.context.neighbors for nc in new_c):
-                            if self.attr_v(new_c) > self.attr_v(c):
-                                candidates.append(fid)
-                                break
-            else:
-                candidates.append(fid)
-
-            if len(candidates) == self.context.k - 1:
-                last_idx = i
-                break
-
-        if len(candidates) == self.context.k - 1:
-            return tuple(candidates), last_idx
-
-        self.expand_range()
-        return (), last_idx
-
-    def enter_single_state_with_heuristic(self):
-        c = ()
-        if self.is_proper_v(self.get_c()):
-            c = self.get_c()
-
-        n_hash = dict_hash(self.context.fid_to_w)
-        if n_hash != self.last_neighbors_hash or random.random() < 0.2:
-            self.last_neighbors_hash = n_hash
-
-            for n in self.context.neighbors.values():
-                if self.context.fid in n.c:
-                    new_c = tuple(nc for nc in n.c if nc != self.context.fid) + (n.fid,)
-                    if all(nc in self.context.neighbors for nc in new_c):
-                        if self.attr_v(new_c) > self.attr_v(c):
-                            c = new_c
-            if Config.H == 'simpler':
-                c_prime, last_idx = self.heuristic_1(c)
-            elif Config.H == 2.1 or Config.H == 'canf':
-                c_prime, last_idx = self.heuristic_2_1(c)
-            elif Config.H == 'vns':
-                c_prime, last_idx = self.heuristic_vns(c)
-            elif Config.H == 'rs':
-                c_prime, last_idx = self.heuristic_rs(c)
-            self.num_heuristic_invoked += 1
-            self.metrics.log_heuristic_ran()
-            self.max_eta_idx = max(self.max_eta_idx, last_idx)
-            if self.attr_v(c_prime) > self.attr_v(c):
-                c = c_prime
-                self.solution_eta_idx = last_idx
-                self.solution_range = self.context.radio_range
-
-            self.set_pair(c)
-
-            discover_msg = Message(MessageTypes.DISCOVER).to_all()
-            self.broadcast(discover_msg)
-
     def enter(self, state):
         self.state = state
-
-        if self.state == StateTypes.SINGLE:
-            self.enter_single_state_with_heuristic()
-            self.put_state_in_q(MessageTypes.REENTER_SINGLE_STATE)
-
-    def reenter(self, state):
-        self.enter(state)
-
-    def put_state_in_q(self, event):
-        msg = Message(event).to_fls(self.context)
-        item = PrioritizedItem(1, msg, False)
-        self.event_queue.put(item)
+        if self.is_cluster:
+            if state == StateTypes.CLUSTER_RECEIVE:
+                discover_msg = Message(MessageTypes.CLUSTER_POS).to_all()
+                self.broadcast(discover_msg)
+            else:
+                flag = self.context.calc_new_position()
+                # if pos is not None:
+                    # self.context.move(self.context.calc_new_position())
+                # self.context.clear_neighbor()
+                self.state = StateTypes.CLUSTER_RECEIVE
+        else:
+            if state == StateTypes.CLUSTER_RECEIVE:
+                self.choose_ctx = self.context.choose_cluster()
+                self.state = StateTypes.SINGLE
+            if self.choose_ctx is not None:
+                choose_msg = Message(MessageTypes.NODE_POS).to_fls(self.choose_ctx)
+                self.broadcast(choose_msg)
+                self.context.clear_neighbor()
+        # if self.state == StateTypes.SINGLE:
+        #     self.enter_single_state_with_heuristic()
+        #     self.put_state_in_q(MessageTypes.REENTER_SINGLE_STATE)
 
     def drive(self, msg):
         event = msg.type
-        self.context.update_neighbor(msg)
+        if event == MessageTypes.NODE_POS or event == MessageTypes.CLUSTER_POS:
+            flag = self.context.update_neighbor(msg)
+            if self.clock >= 5 and self.is_cluster is False:
+                if self.choose_ctx is None or (msg.fid == self.choose_ctx and flag is False):
+                    self.enter(StateTypes.CLUSTER_RECEIVE)
+
+        if event == MessageTypes.TIME_CLOCK:
+            self.clock += 1
+            if self.is_cluster:
+                if self.clock >= 24:
+                    self.enter(StateTypes.SINGLE)
+                    self.clock = 0
+                else:
+                    self.enter(StateTypes.CLUSTER_RECEIVE)
+            else:
+                # print(self.clock)
+                if self.clock >= 6:
+                    self.enter(StateTypes.SINGLE)
+                    self.clock = 0
+
 
         if event == MessageTypes.DISCOVER:
             self.handle_discover(msg)
         elif event == MessageTypes.STOP:
             self.handle_stop(msg)
-        elif event == MessageTypes.REENTER_SINGLE_STATE:
-            if self.state == StateTypes.SINGLE:
-                self.reenter(StateTypes.SINGLE)
+
 
     def broadcast(self, msg):
         msg.from_fls(self.context)

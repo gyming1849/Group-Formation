@@ -1,4 +1,6 @@
 import copy
+import logging
+import random
 import socket
 import pickle
 import threading
@@ -136,6 +138,7 @@ def wait_for_client(sock):
 
 
 if __name__ == '__main__':
+    logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s', filename='your_log_file.log')
     print('multicast' if Config.MULTICAST else 'broadcast')
     N = 1
     nid = 0
@@ -245,7 +248,9 @@ if __name__ == '__main__':
         if i % N == nid:
             node_point_idx.append(i)
         gtl_point_cloud[i] = np.array([point_cloud[i][0], point_cloud[i][1], point_cloud[i][2]])
-
+        print(i, gtl_point_cloud[i])
+    for i in range(total_count, total_count+12):
+        node_point_idx.append(i)
     count = len(node_point_idx)
     print(count)
 
@@ -254,9 +259,13 @@ if __name__ == '__main__':
     shared_arrays = dict()
     shared_memories = dict()
 
+    shared_arrays_fls = dict()
+    shared_memories_fls = dict()
+
     local_gtl_point_cloud = []
 
     try:
+
         for i in node_point_idx:
             shm = shared_memory.SharedMemory(create=True, size=sample.nbytes)
             shared_array = np.ndarray(sample.shape, dtype=sample.dtype, buffer=shm.buf)
@@ -265,7 +274,10 @@ if __name__ == '__main__':
 
             shared_arrays[i] = shared_array
             shared_memories[i] = shm
-            local_gtl_point_cloud.append(gtl_point_cloud[i])
+            if i < point_cloud.shape[0]:
+                local_gtl_point_cloud.append(gtl_point_cloud[i])
+                dispatcher = gtl_point_cloud[i]
+
 
             # if Config.H == 2:
             #     sorted_neighbors = knn_idx[i][1:] + 1
@@ -277,10 +289,17 @@ if __name__ == '__main__':
             # fid_to_dist = dict(zip(sorted_neighbors, knn_dists[i][1:]))
 
             # dispatcher = assign_dispatcher(i+1, dispatchers)
-            dispatcher = gtl_point_cloud[i]
-            p = worker.WorkerProcess(
+
+            if i >= point_cloud.shape[0]:
+                p = worker.WorkerProcess(
+                    count, i + 1, gtl_point_cloud[i - point_cloud.shape[0]],
+                    gtl_point_cloud[i - point_cloud.shape[0]], shm.name, results_directory,
+                    # count, i + 1, gtl_point_cloud[random.randint(0, point_cloud.shape[0]-1)], gtl_point_cloud[random.randint(0, point_cloud.shape[0]-1)], shm.name, results_directory,
+                    G, sorted_neighbors, dists, is_cluster=True)
+            else:
+                p = worker.WorkerProcess(
                 count, i + 1, gtl_point_cloud[i], dispatcher, shm.name, results_directory,
-                G, sorted_neighbors, dists)
+                G, sorted_neighbors, dists, is_cluster=False)
             p.start()
             processes.append(p)
     except OSError as e:
@@ -334,6 +353,8 @@ if __name__ == '__main__':
                         else:
                             cliques[key] = size
 
+
+
             clique_sizes = filter(lambda x: x == G, cliques.values())
             single_sizes = filter(lambda x: x == 1, cliques.values())
             d_hash = dict_hash(cliques)
@@ -345,6 +366,7 @@ if __name__ == '__main__':
                 print(cliques)
                 break
             last_hash = d_hash
+            # print(cliques)
             if len(list(clique_sizes)) == total_count // G and len(list(single_sizes)) == total_count % G:
                 print(cliques)
                 # print(connections)
